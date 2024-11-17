@@ -242,29 +242,35 @@
         }
 
         function jouerCarte(index) {
-            const joueurCarte = joueur[index];
-            const adversaireCarte = adversaires[currentTour];
-            const statChoisie = adversaireCarte.statChoisie;
+    const joueurCarte = joueur[index];
+    const adversaireCarte = adversaires[currentTour];
+    const statChoisie = adversaireCarte.statChoisie;
 
-            if (joueurCarte[statChoisie] >= adversaireCarte[statChoisie]) {
-                alert(`Vous avez gagné ce tour avec ${joueurCarte.nom} !`);
-                currentTour++;
-                points += 100;
-                updateStats();
-                if (currentTour === adversaires.length) {
-                    finDuJeu(true);
-                } else {
-                    renderAdversaire();
-                }
-            } else {
-                alert(`Vous perdez la carte ${joueurCarte.nom} !`);
-                joueur.splice(index, 1);
-                if (joueur.length === 0) {
-                    finDuJeu(false);
-                }
-            }
-            renderCartes();
+    if (joueurCarte[statChoisie] >= adversaireCarte[statChoisie]) {
+        alert(`Vous avez gagné ce tour avec ${joueurCarte.nom} !`);
+        currentTour++;
+        points += 100;
+        updateStats();
+        if (currentTour === adversaires.length) {
+            finDuJeu(true);
+        } else {
+            renderAdversaire();
         }
+    } else {
+        // Soustraire la statistique de la carte perdante de l'adversaire
+        adversaireCarte[statChoisie] -= joueurCarte[statChoisie];
+        if (adversaireCarte[statChoisie] < 0) {
+            adversaireCarte[statChoisie] = 0; // Éviter des valeurs négatives
+        }
+        alert(`Vous perdez la carte ${joueurCarte.nom} ! La statistique ${statChoisie.toUpperCase()} de l'adversaire est maintenant ${adversaireCarte[statChoisie]}.`);
+        joueur.splice(index, 1); // Supprime la carte perdante du joueur
+        if (joueur.length === 0) {
+            finDuJeu(false);
+        }
+    }
+    renderCartes();
+}
+
 
         function updateStats() {
             document.getElementById("tours").textContent = currentTour;
